@@ -1,0 +1,70 @@
+---
+title: "OMBA Segmentation Analysis"
+author: "Brandon Lloyd Shields"
+date: "6/17/2021"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+```{r}
+#Completing a segmentation analysis for the OMBA programing using Kmeans clustering algorithm. This is for enrolled students over the last three years.
+
+
+```
+
+
+```{r}
+#Importing segmentation dataset
+
+seg <- read.csv(file = "~/Desktop/Segmentation_analysis.csv")
+
+seg <- seg[1:148,]
+```
+
+```{r}
+#Replacing missing values with attribute mean.
+
+seg$Distance[is.na(seg$Distance)]<-mean(seg$Distance,na.rm=TRUE)
+seg$P_Exp[is.na(seg$P_Exp)]<-mean(seg$P_Exp,na.rm=TRUE)
+seg$GPA...Cumulative.Undergrad[is.na(seg$GPA...Cumulative.Undergrad)]<-mean(seg$GPA...Cumulative.Undergrad,na.rm=TRUE)
+seg$Age[is.na(seg$Age)]<-mean(seg$Age,na.rm=TRUE)
+```
+
+```{r}
+#Centering and clustering for Kmeans analysis
+standseg <- caret::preProcess(seg, method = c("center", "scale"))
+
+standsegs <- predict(standseg, seg)
+```
+
+
+```{r}
+#Clustering
+k3 <- kmeans(standsegs, centers = 3, nstart = 25)
+k4 <- kmeans(standsegs, centers = 4, nstart = 25)
+```
+
+
+
+```{r}
+#Determing Optimal Cluster
+factoextra::fviz_nbclust(standsegs, kmeans, method = "wss")
+```
+
+```{r}
+
+#Adjusting Data Set to only include BBA degree Binary Variable with clusters below
+standseegsshort <- standsegs[, -c(6, 8:10)]
+
+```
+
+```{r}
+k3.m <- kmeans(standsegs, centers = 3, nstart = 25)
+
+k4.m <- kmeans(standsegs, centers = 4, nstart = 25)
+
+k3.m
+```
+
